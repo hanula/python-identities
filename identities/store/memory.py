@@ -28,9 +28,12 @@ class MemoryStore(Store):
             del self.data[id]
         
         
-    def resource_identities(self, resource_id):
+    def resource_identities(self, resource_id, origin=None):
         ids = self.resource_identity_map.get(resource_id) or []
-        return [self.retrieve(id) for id in ids]
+        identities = [self.retrieve(id) for id in ids]
+        if origin:
+            return [identity for identity in identities if identity.origin == origin]
+        return identities
     
     def identify(self, origin, verifier):
         return self.retrieve(self.make_id(origin, verifier))

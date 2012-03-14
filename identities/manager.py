@@ -12,6 +12,8 @@ class IdentityManager(object):
         self.providers = {}
         self.store = store
 
+    def set_store(self, store):
+        self.store = store
     
     def register_provider(self, origin, provider):
         self.providers[origin] = provider(origin, self)
@@ -21,15 +23,13 @@ class IdentityManager(object):
     
     def identify(self, origin, verifier, *args):
         """Finds identity based on the verifier."""
-        #if origin in self.providers:
         return self.providers[origin].identify(verifier)
     
     def get_identity(self, id):
         return self.store.retrieve(id)
     
-    def get_identities(self, resource_id):
-        identities = self.store.resource_identities(resource_id)
-        return identities
+    def get_identities(self, resource_id, origin=None):
+        return self.store.resource_identities(resource_id, origin)
 
     def store_identity(self, identity):
         return self.get_provider(identity.origin).store_identity(identity)

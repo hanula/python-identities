@@ -14,7 +14,7 @@ from identities.identity import Identity
 class IdentityObject(Base, Identity):
     __tablename__ = 'identities'
     id = Column(Integer, primary_key=True)
-    origin = Column(String(64))
+    origin = Column(String(64), index=True)
     resource_id = Column(Integer, index=True)
     verifier = Column(String(1024), index=True)
     name = Column(Unicode(128))
@@ -47,8 +47,11 @@ class SQLStore(Store):
     def remove(self, id):
         Session.delete(id)
         
-    def resource_identities(self, resource_id):
-        return Session.query(IdentityObject).filter_by(resource_id=resource_id).all()
+    def resource_identities(self, resource_id, origin=None):
+        query = Session.query(IdentityObject).filter_by(resource_id=resource_id)
+        if origin:
+            query = query.filter_by(origin=origin)
+        return query.all()
     
     def identify(self, origin, verifier):
         return Session.query(IdentityObject).filter_by(origin=origin).filter_by(verifier=verifier).first()

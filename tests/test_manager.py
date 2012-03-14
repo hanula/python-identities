@@ -6,7 +6,7 @@ from identities.providers import TokenIdentityProvider, PasswordIdentityProvider
 from identities.store.sqlstore import SQLStore
 from identities.store.memory import MemoryStore
 
-class IdentityProvider(object):
+class ExternalAccountIdentityProvider(object):
     
     def __init__(self, origin, manager):
         self.origin = origin
@@ -28,25 +28,6 @@ class IdentityProvider(object):
         return None
     
 
-class DefaultProvider(IdentityProvider):
-    pass
-
-class PasswordIdentity(IdentityProvider):
-    
-    def load_resource(self, resource_id):
-        r = User()
-        r.id = resource_id
-        return r
-    
-    def store_identity(self, identity):
-        identity.verifier = identity.verifier.encode('rot13')
-        return IdentityProvider.store_identity(self, identity)
-
-
-    def identify(self, verifier):
-        return IdentityProvider.identify(self, verifier.decode('rot13'))
-
-
 class User(object):
     def __init__(self, id):
         self.id = id
@@ -65,7 +46,7 @@ def test_it_all_already():
     user = User(123)
             
     
-    manager.register_provider('external_account', IdentityProvider)
+    manager.register_provider('external_account', ExternalAccountIdentityProvider)
     manager.register_provider('token', TokenIdentityProvider)
     manager.register_provider('password', PasswordIdentityProvider)
     

@@ -5,7 +5,7 @@ import string
 
 class TokenIdentityProvider(IdentityProvider):
     require_verifier = False
-    default_name = 'Token'
+    default_name = u'Token'
     token_length = 32
 
     def generate_token(self):
